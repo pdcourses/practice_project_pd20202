@@ -8,7 +8,7 @@ import {
   clearUserStore,
   headerRequest,
 } from '../../actions/actionCreator';
-import '../Logo';
+import Logo from '../Logo';
 
 class Header extends React.Component {
   componentDidMount() {
