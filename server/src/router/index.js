@@ -19,26 +19,19 @@ router.post(
 
 router.post('/login', validators.validateLogin, userController.login);
 
+router.post('/getUser', checkToken.checkAuth);
+
+// contestRouter
+
 router.use('/contests', contestRouter);
-// /api/contests
-contestRouter.get(
-  '/:contestId',
-  checkToken.checkToken,
-  basicMiddlewares.canGetContest,
-  contestController.getContestById
-);
-contestRouter.put(
-  '/:contestId',
-  checkToken.checkToken,
-  upload.updateContestFile,
-  contestController.updateContest
-);
 
 router.post(
   '/dataForContest',
   checkToken.checkToken,
   contestController.dataForContest
 );
+
+//paymentRouter
 
 router.post(
   '/pay',
@@ -51,38 +44,32 @@ router.post(
 );
 
 router.post(
+  '/cashout',
+  checkToken.checkToken,
+  basicMiddlewares.onlyForCreative,
+  userController.cashout
+);
+
+// customerRouter
+
+router.post(
   '/getCustomersContests',
   checkToken.checkToken,
   contestController.getCustomersContests
 );
 
-router.get(
-  '/getContestById',
-  checkToken.checkToken,
-  basicMiddlewares.canGetContest,
-  contestController.getContestById
-);
-
+// userRouter
 router.post(
-  '/getAllContests',
+  '/updateUser',
   checkToken.checkToken,
-  basicMiddlewares.onlyForCreative,
-  contestController.getContests
+  upload.uploadAvatar,
+  userController.updateUser
 );
-
-router.post('/getUser', checkToken.checkAuth);
 
 router.get(
   '/downloadFile/:fileName',
   checkToken.checkToken,
   contestController.downloadFile
-);
-
-router.post(
-  '/updateContest',
-  checkToken.checkToken,
-  upload.updateContestFile,
-  contestController.updateContest
 );
 
 router.post(
@@ -107,19 +94,7 @@ router.post(
   userController.changeMark
 );
 
-router.post(
-  '/updateUser',
-  checkToken.checkToken,
-  upload.uploadAvatar,
-  userController.updateUser
-);
-
-router.post(
-  '/cashout',
-  checkToken.checkToken,
-  basicMiddlewares.onlyForCreative,
-  userController.cashout
-);
+// chatRouter
 
 router.post('/newMessage', checkToken.checkToken, chatController.addMessage);
 
