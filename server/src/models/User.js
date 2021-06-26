@@ -69,6 +69,10 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Offer, { foreignKey: 'userId', targetKey: 'id' });
     User.hasMany(models.Contests, { foreignKey: 'userId', targetKey: 'id' });
     User.hasMany(models.Ratings, { foreignKey: 'userId', targetKey: 'id' });
+    User.hasMany(models.TransactionHistory, {
+      foreignKey: 'userId',
+      targetKey: 'id',
+    });
   };
 
   return User;
