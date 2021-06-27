@@ -61,3 +61,12 @@ module.exports.createOffer = async (data) => {
     return result.get({ plain: true });
   }
 };
+
+module.exports.queryOffersFiles = async (queryObj) => {
+  const result = await Offers.findAll(queryObj);
+  if (result.length !== 0) {
+    return result;
+  } else {
+    throw new ServerError('Offers not found');
+  }
+};
