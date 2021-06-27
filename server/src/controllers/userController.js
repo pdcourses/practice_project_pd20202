@@ -16,16 +16,17 @@ const bankQueries = require('./queries/bankQueries');
 const ratingQueries = require('./queries/ratingQueries');
 const transactionQueries = require('./queries/transactionQueries');
 
-module.exports.getUserTransactions = async (req, res, next){
-  try{
-    const{ userData: {userId}} = req;
+module.exports.getUserTransactions = async (req, res, next) => {
+  try {
+    const {
+      userData: { userId },
+    } = req;
     const result = await transactionQueries.getHistoryByUserId(userId);
     res.send(result);
-  } catch(e){
+  } catch (e) {
     next(e);
   }
 };
-
 
 module.exports.login = async (req, res, next) => {
   try {
