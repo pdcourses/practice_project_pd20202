@@ -2,6 +2,7 @@
 // LOG && SingUp
 // создавать пользователя и вписывать его в базу и проверять
 
+const regeneratorRuntime = require('regenerator-runtime');
 const request = require('supertest');
 const { createApp } = require('../src/app');
 const { User, sequelize } = require('../src/models');
@@ -10,17 +11,22 @@ const CONSTANTS = require('../src/constants');
 const util = require('util');
 const jwt = require('jsonwebtoken');
 
-const app = createApp();
+const app = createApp;
 
-const userData = {
-  firstName: 'Test',
-  lastName: 'Testovich',
-  displayName: 'Testik',
-  email: 'test123@gmail.com',
-  password: 'Qwerty_123',
-  role: CONSTANTS.CUSTOMER,
-  balance: 1000,
-};
+function getUserData() {
+  return {
+    firstName: 'Test',
+    lastName: 'Testovich',
+    displayName: 'Testik',
+    email: 'test123@gmail.com',
+    password: 'Qwerty_123',
+    role: CONSTANTS.CUSTOMER,
+    balance: 1000,
+  };
+}
+
+const userData = getUserData();
+
 const authSuccessBodySchema = yup
   .object({
     data: yup.object({
@@ -34,6 +40,7 @@ const authSuccessBodySchema = yup
     }),
   })
   .required();
+
 const authErrorSchema = yup.object({
   errors: yup.array().of(yup.object()).required(),
 });
@@ -41,6 +48,20 @@ const authErrorSchema = yup.object({
 beforeAll(() => User.create(userData));
 afterAll(() => sequelize.close());
 
+describe('LOGIN', () => {
+  test('User will be logged successfully', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({
+      email: userData.email,
+      password: userData.password,
+    });
+    expect(status).toBe(201);
+    expect(await authSuccessBodySchema.isValid(body).toBeTruthy());
+  });
+});
+
+/*
 describe('LOGIN', () => {
   test('User will be logged successfully', async () => {
     const { status, body } = await (
@@ -122,3 +143,4 @@ describe('AUTH', () => {
     expect(await authErrorSchema.isValid(response.body).toBeTruthy());
   });
 });
+*/
