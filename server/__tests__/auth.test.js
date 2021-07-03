@@ -1,34 +1,124 @@
-function sum(a, b) {
-  if (typeof a !== 'number' || typeof b !== 'number') {
-    throw new TypeError();
-  }
-  return a + b;
-}
+// jest: NODE_ENV TEST
+// LOG && SingUp
+// создавать пользователя и вписывать его в базу и проверять
 
-test('throw testing: sum 2 + 2 equal to 4', () => {
-  expect(() => sum('2', '2')).toThrow(TypeError);
+const request = require('supertest');
+const { createApp } = require('../src/app');
+const { User, sequelize } = require('../src/models');
+const yup = require('yup');
+const CONSTANTS = require('../src/constants');
+const util = require('util');
+const jwt = require('jsonwebtoken');
+
+const app = createApp();
+
+const userData = {
+  firstName: 'Test',
+  lastName: 'Testovich',
+  displayName: 'Testik',
+  email: 'test123@gmail.com',
+  password: 'Qwerty_123',
+  role: CONSTANTS.CUSTOMER,
+  balance: 1000,
+};
+const authSuccessBodySchema = yup
+  .object({
+    data: yup.object({
+      user: yup.object().required(),
+      tokenPair: yup
+        .object({
+          accessToken: yup.string().required(),
+          refreshToken: yup.string().required(),
+        })
+        .required(),
+    }),
+  })
+  .required();
+const authErrorSchema = yup.object({
+  errors: yup.array().of(yup.object()).required(),
 });
 
-test.skip('string testing: sum "2" + "2" equal to "4"', () => {
-  const result = sum('2', '2');
-  expect(result).toBe(4);
+beforeAll(() => User.create(userData));
+afterAll(() => sequelize.close());
+
+describe('LOGIN', () => {
+  test('User will be logged successfully', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({
+      email: userData.email,
+      password: userData.password,
+    });
+    expect(status).toBe(201);
+    expect(await authSuccessBodySchema.isValid(body).toBeTruthy());
+  });
+  test('User will be logged with 403 status', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({
+      email: 'bad-email',
+      password: 'qwerty',
+    });
+    expect(status).toBe(403);
+    expect(await authErrorSchema.isValid(body).toBeTruthy());
+  });
+  test('User must pass to login', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({});
+    expect(status).toBe(400);
+    expect(await authErrorSchema.isValid(body).toBeTruthy());
+  });
 });
 
-test.skip('number testing: sum "2" + "2" equal to "4"', () => {
-  const result = sum(2, 2);
-  expect(result).toBe(4);
+describe('SIGN UP', () => {
+  test('User should be able to sign up successfully', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({
+      email: userData.email,
+      password: userData.password,
+    });
+    expect(status).toBe(201);
+  });
+  test('User should get bad request error on invalid data sending', async () => {
+    const invalidUserData = {
+      firstName: 'Test',
+      lastName: 'Testovich',
+      displayName: 'Testik',
+      email: 'test123',
+      password: '123',
+      role: CONSTANTS.CUSTOMER,
+      balance: 1000,
+    };
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({ invalidUserData });
+    expect(status).toBe(400);
+    expect(await authErrorSchema.isValid(body).toBeTruthy());
+  });
+  test('User should get conflict error on userd email', async () => {
+    const { status, body } = await (
+      await request(app).post('/api/auth/login')
+    ).send({
+      email: userData.email,
+      password: userData.password,
+    });
+    expect(status).toBe(409);
+    expect(await authErrorSchema.isValid(body).toBeTruthy());
+  });
 });
 
-test.skip('string testing: sum "Max" + "Max" equal to "Infinity"', () => {
-  const result = sum(Number.MAX_VALUE, Number.MAX_VALUE);
-  expect(result).toBe(Infinity);
-});
-
-test.skip('testing function sum', () => {
-  expect(sum(NaN, 1)).toBe(NaN);
-  expect(sum(NaN, {})).toBe(NaN);
-  expect(sum(NaN, [])).toBe(NaN);
-  expect(sum(NaN, '123')).toBe(NaN);
-  expect(sum(NaN, 'qwerty')).toBe(NaN);
-  expect(sum(NaN, true)).toBe(NaN);
+describe('AUTH', () => {
+  test('Expired access token received unauthorized error', async () => {
+    const acToken = {
+      sign: util.promisify(jwt.sign),
+      verify: util.promisify(jwt.verify),
+    };
+    await request(app)
+      .post('/api/getContestById')
+      .set('Authorization', acToken);
+    expect(status).toBe(401);
+    expect(await authErrorSchema.isValid(response.body).toBeTruthy());
+  });
 });
