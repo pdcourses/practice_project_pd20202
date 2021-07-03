@@ -13,6 +13,8 @@ COPY package*.json ./
 RUN npm install -g nodemon
 RUN npm install -g sequelize-cli
 
+RUN npm install --save-dev jest
+
 RUN npm install
 
 COPY . .

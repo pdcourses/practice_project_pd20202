@@ -9,11 +9,13 @@
   },
   "test": {
     "username": "postgres",
-    "password": "admin",
-    "database": "todo-test",
+    "password": null,
+    "database": "squadhelp-test-pd20202",
     "host": "localhost",
+    "port": 5432,
     "dialect": "postgres",
-    "operatorsAliases": "Op"
+    "operatorsAliases": "Op",
+    "logging": false
   },
   "production": {
     "username": "postgres",
