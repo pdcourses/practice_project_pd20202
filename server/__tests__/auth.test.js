@@ -5,7 +5,8 @@
 const regeneratorRuntime = require('regenerator-runtime');
 const request = require('supertest');
 const { createApp } = require('../src/app');
-const { User, sequelize } = require('../src/models');
+const db = require('../src/models/');
+const { sequelize } = require('../src/models');
 const yup = require('yup');
 const CONSTANTS = require('../src/constants');
 const util = require('util');
@@ -45,6 +46,7 @@ const authErrorSchema = yup.object({
   errors: yup.array().of(yup.object()).required(),
 });
 
+const User = db.User;
 beforeAll(() => User.create(userData));
 afterAll(() => sequelize.close());
 
