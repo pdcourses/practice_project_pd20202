@@ -1,7 +1,6 @@
 const createHttpError = require('http-errors');
 const { User } = require('./../models');
-
-exports.login = async (req, res, next) => {
+exports.signInUser = async (req, res, next) => {
   try {
     const {
       body: { email, password },
