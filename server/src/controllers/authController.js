@@ -8,7 +8,8 @@ exports.signInUser = async (req, res, next) => {
     const userInstance = await User.findOne({
       where: { email },
     });
-    if (userInstance && (await userInstance.comparePassword(password))) {
+    if (userInstance && 
+        (await userInstance.comparePassword(password))) {
         const data = await 
       return res.end();
     }
