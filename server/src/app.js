@@ -3,12 +3,17 @@ const cors = require('cors');
 const handlerError = require('./handlerError/handler');
 const router = require('./router');
 
-const app = express();
+function createApp() {
+  const app = express();
 
-app.use(cors());
-app.use(express.json());
-app.use('/public', express.static('public'));
-app.use('/api', router);
-app.use(handlerError);
+  app.use(cors());
+  app.use(express.json());
+  app.use('/public', express.static('public'));
+  app.use('/api', router);
+  app.use(handlerError);
 
-module.exports = app;
+  return app;
+}
+
+exports.createApp = createApp;
+exports.app = createApp();

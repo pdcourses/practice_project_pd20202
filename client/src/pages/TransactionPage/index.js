@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import TransactionTable from '../../components/TransactionTable';
-import Header from '../../components/Header';
+import Header from '../../components/Header/Header';
 import CONSTANTS from '../../constants';
 import { Link } from 'react-router-dom';
 import styles from './TransactionPage.sass';

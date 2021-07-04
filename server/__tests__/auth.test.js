@@ -5,14 +5,14 @@
 const regeneratorRuntime = require('regenerator-runtime');
 const request = require('supertest');
 const { createApp } = require('../src/app');
-const db = require('../src/models/');
+const User = require('../src/models/User');
 const { sequelize } = require('../src/models');
 const yup = require('yup');
 const CONSTANTS = require('../src/constants');
 const util = require('util');
 const jwt = require('jsonwebtoken');
 
-const app = createApp;
+const app = createApp();
 
 function getUserData() {
   return {
@@ -46,8 +46,9 @@ const authErrorSchema = yup.object({
   errors: yup.array().of(yup.object()).required(),
 });
 
-const User = db.User;
-beforeAll(() => User.create(userData));
+console.log(User.create);
+
+beforeAll(async () => await User.create(userData));
 afterAll(() => sequelize.close());
 
 describe('LOGIN', () => {
