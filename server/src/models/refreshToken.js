@@ -18,8 +18,13 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       token: {
-        type: DataTypes.TEXT,
+        type: DataTypes.UUID,
+        allowNull: false,
         unique: true,
+      },
+      expiredIn: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
       userAgent: DataTypes.STRING,
       fingerprint: DataTypes.STRING,

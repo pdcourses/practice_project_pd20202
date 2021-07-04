@@ -1,5 +1,6 @@
 const util = require('util');
 const jwt = require('jsonwebtoken');
+/*
 const { v4: uuidv4 } = require('uuid');
 const {
   env: {
@@ -9,9 +10,16 @@ const {
     REFRESH_TOKEN_SECRET = uuidv4(),
   },
 } = process;
-
+*/
 const sign = util.promisify(jwt.sign);
+const verify = util.promisify(jwt.verify);
 
+module.exports = {
+  sign,
+  verify,
+};
+
+/*
 const signAccessToken = (payload) =>
   sign(payload, ACCESS_TOKEN_SECRET, {
     expiresIn: ACCESS_TOKEN_EXP,
@@ -28,3 +36,4 @@ const signTokenPair = async (accessTokenPayload, refreshTokenPayload = {}) => {
 };
 
 module.exports = { signTokenPair };
+*/

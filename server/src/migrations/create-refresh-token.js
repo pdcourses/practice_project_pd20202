@@ -16,7 +16,8 @@ module.exports = {
         },
       },
       token: {
-        type: Sequelize.TEXT,
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV4,
         unique: true,
         allowNull: false,
       },
@@ -25,6 +26,10 @@ module.exports = {
       },
       fingerprint: {
         type: Sequelize.STRING,
+      },
+      expiredIn: {
+        type: Sequelize.DATE,
+        allowNull: false,
       },
       createdAt: {
         allowNull: false,
